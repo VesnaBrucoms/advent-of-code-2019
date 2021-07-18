@@ -9,15 +9,24 @@ def day_1():
         calculated_fuel = calculate_fuel_for_mass(mass)
         calculated_fuel += calculate_fuel_for_fuel(calculated_fuel)
         fuel_total += calculated_fuel
-    print(f"Day 1: {fuel_total}")
+    print(f'Day 1: {fuel_total} units of fuel required')
 
 
 def day_2():
     program = _read_puzzle_program_file('day_2.txt')
     program = _convert_program_int(program)
-    print(program)
+    _adjust_program_state(program, 12, 2)
     run_program(program)
-    print(program)
+    result = program[0]
+    print(f'Day 2: Program result is {result}')
+
+
+def day_2_part_2(noun, verb):
+    program = _read_puzzle_program_file('day_2.txt')
+    program = _convert_program_int(program)
+    _adjust_program_state(program, noun, verb)
+    run_program(program)
+    return program[0]
 
 
 def _read_puzzle_file(filename):
@@ -29,7 +38,7 @@ def _read_puzzle_file(filename):
 
 
 def _read_puzzle_program_file(filename):
-    program = ""
+    program = ''
     with open(f'./tests/puzzle_inputs/{filename}', 'r') as program_file:
         program = program_file.read()
     return program.split(',')
@@ -42,6 +51,19 @@ def _convert_program_int(program):
     return converted
 
 
+def _adjust_program_state(program, noun, verb):
+    program[1] = noun
+    program[2] = verb
+
+
 if __name__ == '__main__':
     day_1()
     day_2()
+    for noun in range(0, 100):
+        for verb in range(0, 100):
+            result = day_2_part_2(noun, verb)
+            if result == 19690720:
+                print(f'Day 2 part 2: Program result is {result}')
+                print(f'Noun of {noun}, verb of {verb}')
+                noun_and_verb = (100 * noun) + verb
+                print(f'Final result {noun_and_verb}')
