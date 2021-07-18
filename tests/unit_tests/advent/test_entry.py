@@ -1,8 +1,8 @@
 from parameterized import parameterized
 import unittest
 
-from advent.entry import _calculate_fuel_for_fuel
-from advent.entry import _calculate_fuel_for_mass
+from advent.day_one import calculate_fuel_for_fuel
+from advent.day_one import calculate_fuel_for_mass
 
 
 class TestEntry(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestEntry(unittest.TestCase):
         ("negative", 2, 0)
     ])
     def test_calculate_fuel_for_mass(self, name, given_mass, expected_fuel):
-        fuel = _calculate_fuel_for_mass(given_mass)
+        fuel = calculate_fuel_for_mass(given_mass)
 
         self.assertEqual(expected_fuel, fuel)
 
@@ -24,6 +24,6 @@ class TestEntry(unittest.TestCase):
         ("large", 33583, 16763),
     ])
     def test_calculate_fuel_for_fuel(self, name, given_mass, expected_fuel):
-        fuel = _calculate_fuel_for_fuel(given_mass)
+        fuel = calculate_fuel_for_fuel(given_mass)
 
         self.assertEqual(expected_fuel, fuel)
