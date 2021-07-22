@@ -38,6 +38,13 @@ def day_5():
     print(f'Day 5: Program result is {result}')
 
 
+def day_9():
+    program = _read_puzzle_program_file('day_9.txt')
+    program = _convert_program_int(program)
+    program = _allocate_extra_memory(program, 512)
+    run_program(program)
+
+
 def _read_puzzle_file(filename):
     inputs = []
     with open(f'./tests/puzzle_inputs/{filename}', 'r') as puzzle_input:
@@ -57,7 +64,13 @@ def _convert_program_int(program):
     converted = []
     for value in program:
         converted.append(int(value))
+    converted.extend([0] * 256)
     return converted
+
+
+def _allocate_extra_memory(program, amount):
+    program.extend([0] * amount)
+    return program
 
 
 def _adjust_program_state(program, noun, verb):
@@ -66,7 +79,7 @@ def _adjust_program_state(program, noun, verb):
 
 
 if __name__ == '__main__':
-    day_1()
+    # day_1()
     # day_2()
     # for noun in range(0, 100):
     #     for verb in range(0, 100):
@@ -76,4 +89,4 @@ if __name__ == '__main__':
     #             print(f'Noun of {noun}, verb of {verb}')
     #             noun_and_verb = (100 * noun) + verb
     #             print(f'Final result {noun_and_verb}')
-    day_5()
+    day_9()
