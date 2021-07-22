@@ -8,6 +8,10 @@ ADD = 1
 MULTIPLY = 2
 INPUT = 3
 OUTPUT = 4
+JUMP_IF_TRUE = 5
+JUMP_IF_FALSE = 6
+LESS_THAN = 7
+EQUALS = 8
 HALT = 99
 
 
@@ -50,6 +54,54 @@ def run_program(program):
             parameter_1 = set_parameter_with_default_mode(program[pointer + 1])
             parameter_1[0] = param_modes[0]
             output(parameter_1, program)
+            pointer += instruction_size
+        elif opcode == JUMP_IF_TRUE:
+            instruction_size = 3
+            parameters = []
+            parameters.append(set_parameter_with_default_mode(program[pointer + 1]))
+            parameters.append(set_parameter_with_default_mode(program[pointer + 2]))
+            param_index = 0
+            for mode in param_modes[::-1]:
+                parameters[param_index][0] = mode
+                param_index += 1
+            pointer_unchanged, pointer = jump_if_true(parameters[0], parameters[1], program, pointer)
+            if pointer_unchanged:
+                pointer += instruction_size
+        elif opcode == JUMP_IF_FALSE:
+            instruction_size = 3
+            parameters = []
+            parameters.append(set_parameter_with_default_mode(program[pointer + 1]))
+            parameters.append(set_parameter_with_default_mode(program[pointer + 2]))
+            param_index = 0
+            for mode in param_modes[::-1]:
+                parameters[param_index][0] = mode
+                param_index += 1
+            pointer_unchanged, pointer = jump_if_false(parameters[0], parameters[1], program, pointer)
+            if pointer_unchanged:
+                pointer += instruction_size
+        elif opcode == LESS_THAN:
+            instruction_size = 4
+            parameters = []
+            parameters.append(set_parameter_with_default_mode(program[pointer + 1]))
+            parameters.append(set_parameter_with_default_mode(program[pointer + 2]))
+            parameters.append(set_parameter_with_default_mode(program[pointer + 3]))
+            param_index = 0
+            for mode in param_modes[::-1]:
+                parameters[param_index][0] = mode
+                param_index += 1
+            less_than(parameters[0], parameters[1], parameters[2], program)
+            pointer += instruction_size
+        elif opcode == EQUALS:
+            instruction_size = 4
+            parameters = []
+            parameters.append(set_parameter_with_default_mode(program[pointer + 1]))
+            parameters.append(set_parameter_with_default_mode(program[pointer + 2]))
+            parameters.append(set_parameter_with_default_mode(program[pointer + 3]))
+            param_index = 0
+            for mode in param_modes[::-1]:
+                parameters[param_index][0] = mode
+                param_index += 1
+            equals(parameters[0], parameters[1], parameters[2], program)
             pointer += instruction_size
         elif opcode == HALT:
             running = False
@@ -118,3 +170,61 @@ def output(param_1, program):
     elif param_1[0] == IMMEDIATE_MODE:
         output = param_1[1]
     print(output)
+
+
+def jump_if_true(param_1, param_2, program, pointer):
+    if param_1[0] == POSITION_MODE:
+        input_1 = program[param_1[1]]
+    elif param_1[0] == IMMEDIATE_MODE:
+        input_1 = param_1[1]
+    
+    if param_2[0] == POSITION_MODE:
+        input_2 = program[param_2[1]]
+    elif param_2[0] == IMMEDIATE_MODE:
+        input_2 = param_2[1]
+
+    return (False, input_2) if input_1 != 0 else (True, pointer)
+
+
+def jump_if_false(param_1, param_2, program, pointer):
+    if param_1[0] == POSITION_MODE:
+        input_1 = program[param_1[1]]
+    elif param_1[0] == IMMEDIATE_MODE:
+        input_1 = param_1[1]
+    
+    if param_2[0] == POSITION_MODE:
+        input_2 = program[param_2[1]]
+    elif param_2[0] == IMMEDIATE_MODE:
+        input_2 = param_2[1]
+
+    return (False, input_2) if input_1 == 0 else (True, pointer)
+
+
+def less_than(param_1, param_2, param_3, program):
+    if param_1[0] == POSITION_MODE:
+        input_1 = program[param_1[1]]
+    elif param_1[0] == IMMEDIATE_MODE:
+        input_1 = param_1[1]
+
+    if param_2[0] == POSITION_MODE:
+        input_2 = program[param_2[1]]
+    elif param_2[0] == IMMEDIATE_MODE:
+        input_2 = param_2[1]
+
+    result = 1 if input_1 < input_2 else 0
+    program[param_3[1]] = result
+
+
+def equals(param_1, param_2, param_3, program):
+    if param_1[0] == POSITION_MODE:
+        input_1 = program[param_1[1]]
+    elif param_1[0] == IMMEDIATE_MODE:
+        input_1 = param_1[1]
+
+    if param_2[0] == POSITION_MODE:
+        input_2 = program[param_2[1]]
+    elif param_2[0] == IMMEDIATE_MODE:
+        input_2 = param_2[1]
+
+    result = 1 if input_1 == input_2 else 0
+    program[param_3[1]] = result

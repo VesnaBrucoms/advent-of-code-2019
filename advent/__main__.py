@@ -34,7 +34,7 @@ def day_5():
     program = _convert_program_int(program)
     # _adjust_program_state(program, 12, 2)
     run_program(program)
-    result = program[0]
+    # result = program[0]
     print(f'Day 5: Program result is {result}')
 
 
