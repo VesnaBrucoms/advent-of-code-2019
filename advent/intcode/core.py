@@ -1,5 +1,6 @@
 """Handles running of Intcode programs."""
-from .utils import get_parameter_by_mode, set_parameter_with_default_mode
+from .utils import get_input_parameter_by_mode, get_output_parameter_by_mode
+from .utils import set_parameter_with_default_mode
 
 
 ADD = 1
@@ -50,6 +51,7 @@ def run_program(program):
         elif opcode == INPUT:
             instruction_size = 2
             parameter_1 = set_parameter_with_default_mode(program[POINTER + 1])
+            parameter_1[0] = param_modes[0]
             input_op(parameter_1, program)
             POINTER += instruction_size
         elif opcode == OUTPUT:
@@ -140,71 +142,75 @@ def get_opcode_and_param_modes(opcode_and_param_modes):
 
 def add(param_1, param_2, param_3, program):
     global RELATIVE_BASE
-    input_1 = get_parameter_by_mode(param_1, program, RELATIVE_BASE)
-    input_2 = get_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    input_1 = get_input_parameter_by_mode(param_1, program, RELATIVE_BASE)
+    input_2 = get_input_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    output = get_output_parameter_by_mode(param_3, program, RELATIVE_BASE)
 
     result = input_1 + input_2
-    program[param_3[1]] = result
+    program[output] = result
 
 
 def multiply(param_1, param_2, param_3, program):
     global RELATIVE_BASE
-    input_1 = get_parameter_by_mode(param_1, program, RELATIVE_BASE)
-    input_2 = get_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    input_1 = get_input_parameter_by_mode(param_1, program, RELATIVE_BASE)
+    input_2 = get_input_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    output = get_output_parameter_by_mode(param_3, program, RELATIVE_BASE)
 
     result = input_1 * input_2
-    program[param_3[1]] = result
+    program[output] = result
 
 
 def input_op(param_1, program):
     user_input = input('-> ')
     global RELATIVE_BASE
-    address = get_parameter_by_mode(param_1, program, RELATIVE_BASE, False)
+    address = get_output_parameter_by_mode(param_1, program, RELATIVE_BASE)
     program[address] = int(user_input)
 
 
 def output(param_1, program):
     global RELATIVE_BASE
-    output = get_parameter_by_mode(param_1, program, RELATIVE_BASE)
+    output = get_input_parameter_by_mode(param_1, program, RELATIVE_BASE)
     print(output)
 
 
 def jump_if_true(param_1, param_2, program, pointer):
     global RELATIVE_BASE
-    input_1 = get_parameter_by_mode(param_1, program, RELATIVE_BASE)
-    input_2 = get_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    input_1 = get_input_parameter_by_mode(param_1, program, RELATIVE_BASE)
+    input_2 = get_input_parameter_by_mode(param_2, program, RELATIVE_BASE)
 
     return (False, input_2) if input_1 != 0 else (True, pointer)
 
 
 def jump_if_false(param_1, param_2, program, pointer):
     global RELATIVE_BASE
-    input_1 = get_parameter_by_mode(param_1, program, RELATIVE_BASE)
-    input_2 = get_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    input_1 = get_input_parameter_by_mode(param_1, program, RELATIVE_BASE)
+    input_2 = get_input_parameter_by_mode(param_2, program, RELATIVE_BASE)
 
     return (False, input_2) if input_1 == 0 else (True, pointer)
 
 
 def less_than(param_1, param_2, param_3, program):
     global RELATIVE_BASE
-    input_1 = get_parameter_by_mode(param_1, program, RELATIVE_BASE)
-    input_2 = get_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    input_1 = get_input_parameter_by_mode(param_1, program, RELATIVE_BASE)
+    input_2 = get_input_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    output = get_output_parameter_by_mode(param_3, program, RELATIVE_BASE)
 
     result = 1 if input_1 < input_2 else 0
-    program[param_3[1]] = result
+    program[output] = result
 
 
 def equals(param_1, param_2, param_3, program):
     global RELATIVE_BASE
-    input_1 = get_parameter_by_mode(param_1, program, RELATIVE_BASE)
-    input_2 = get_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    input_1 = get_input_parameter_by_mode(param_1, program, RELATIVE_BASE)
+    input_2 = get_input_parameter_by_mode(param_2, program, RELATIVE_BASE)
+    output = get_output_parameter_by_mode(param_3, program, RELATIVE_BASE)
 
     result = 1 if input_1 == input_2 else 0
-    program[param_3[1]] = result
+    program[output] = result
 
 
 def adjust_relative_base(param_1, program):
     global RELATIVE_BASE
-    input_1 = get_parameter_by_mode(param_1, program, RELATIVE_BASE)
+    input_1 = get_input_parameter_by_mode(param_1, program, RELATIVE_BASE)
 
     RELATIVE_BASE += input_1
